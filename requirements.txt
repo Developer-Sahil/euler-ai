@@ -1,0 +1,48 @@
+langchain
+langchain-groq
+groq
+sentence-transformers 
+chromadb 
+requests 
+python-dotenv
+feedparser
+fastapi 
+uvicorn
+chromadb
+pydantic-settings
+
+# """
+#                           ┌─────────────────────┐
+#                           │   phase3_main.py   │
+#                           │ (Entry Point CLI)  │
+#                           └─────────┬──────────┘
+#                                     │
+#                                     ▼
+#                         ┌────────────────────────┐
+#                         │     Orchestrator      │
+#                         │ (Controls Agents)     │
+#                         └─────────┬────────────┘
+#         ┌─────────────────────────┼─────────────────────────┐
+#         ▼                         ▼                         ▼
+# ┌────────────────┐       ┌────────────────────┐    ┌─────────────────────┐
+# │  SearcherAgent │       │ SummarizerAgent    │    │  QuestionerAgent    │
+# │ (agents/searcher.py)   │ (agents/summarizer │    │ (agents/questioner) │
+# │  - Fetch papers from   │   _agent.py)       │    │ - Cluster summaries │
+# │    arXiv API           │ - Summarize papers │    │ - Detect insights   │
+# │                        │ - Store in Chroma  │    │ - Ask deep questions│
+# └────────┬─────────┘     └──────────┬─────────┘    └─────────┬──────────┘
+#          │                          │                        │
+#          ▼                          ▼                        ▼
+#   ┌──────────────┐          ┌──────────────┐          ┌───────────────────┐
+#   │ paper_fetcher│          │ summarizer   │          │ clustering        │
+#   │.py           │          │.py           │          │.py, insight_...   │
+#   └──────────────┘          └──────────────┘          └───────────────────┘
+
+#                           ┌──────────────────────────────┐
+#                           │      AgentLogger             │
+#                           │ (agents/base.py)             │
+#                           │ Logs JSON events to disk:    │
+#                           │ logs/agent_runs/<timestamp>  │
+#                           └──────────────────────────────┘
+
+# """
