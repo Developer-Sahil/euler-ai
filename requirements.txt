@@ -1,48 +1,24 @@
-langchain
-langchain-groq
-groq
-sentence-transformers 
-chromadb 
-requests 
-python-dotenv
-feedparser
-fastapi 
-uvicorn
-chromadb
-pydantic-settings
+# Core LangChain
+langchain==0.1.XX   # specify latest stable version
 
-# """
-#                           ┌─────────────────────┐
-#                           │   phase3_main.py   │
-#                           │ (Entry Point CLI)  │
-#                           └─────────┬──────────┘
-#                                     │
-#                                     ▼
-#                         ┌────────────────────────┐
-#                         │     Orchestrator      │
-#                         │ (Controls Agents)     │
-#                         └─────────┬────────────┘
-#         ┌─────────────────────────┼─────────────────────────┐
-#         ▼                         ▼                         ▼
-# ┌────────────────┐       ┌────────────────────┐    ┌─────────────────────┐
-# │  SearcherAgent │       │ SummarizerAgent    │    │  QuestionerAgent    │
-# │ (agents/searcher.py)   │ (agents/summarizer │    │ (agents/questioner) │
-# │  - Fetch papers from   │   _agent.py)       │    │ - Cluster summaries │
-# │    arXiv API           │ - Summarize papers │    │ - Detect insights   │
-# │                        │ - Store in Chroma  │    │ - Ask deep questions│
-# └────────┬─────────┘     └──────────┬─────────┘    └─────────┬──────────┘
-#          │                          │                        │
-#          ▼                          ▼                        ▼
-#   ┌──────────────┐          ┌──────────────┐          ┌───────────────────┐
-#   │ paper_fetcher│          │ summarizer   │          │ clustering        │
-#   │.py           │          │.py           │          │.py, insight_...   │
-#   └──────────────┘          └──────────────┘          └───────────────────┘
+# Vector DB
+chromadb==0.4.4
 
-#                           ┌──────────────────────────────┐
-#                           │      AgentLogger             │
-#                           │ (agents/base.py)             │
-#                           │ Logs JSON events to disk:    │
-#                           │ logs/agent_runs/<timestamp>  │
-#                           └──────────────────────────────┘
+# Lightweight embeddings / sentence transformers
+sentence-transformers==2.2.2
+torch==2.2.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
-# """
+# HTTP requests & config
+requests==2.31.0
+python-dotenv==1.0.1
+feedparser==6.0.10
+
+# FastAPI + ASGI server
+fastapi==0.109.0
+uvicorn==0.23.2
+
+# Pydantic for settings management
+pydantic-settings==2.3.1
+
+# Optional: If you need LangChain-Groq integration
+langchain-groq==0.0.5
