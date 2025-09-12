@@ -5,8 +5,8 @@ langchain==0.1.XX   # specify latest stable version
 chromadb==0.4.4
 
 # Lightweight embeddings / sentence transformers
-sentence-transformers==2.2.2
-torch==2.2.0+cpu --index-url https://download.pytorch.org/whl/cpu
+# sentence-transformers==2.2.2
+# torch==2.2.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
 # HTTP requests & config
 requests==2.31.0
