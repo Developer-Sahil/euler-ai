@@ -1,24 +1,20 @@
 # Core LangChain
-langchain==0.1.XX   # specify latest stable version
+langchain
 
 # Vector DB
-chromadb==0.4.4
-
-# Lightweight embeddings / sentence transformers
-# sentence-transformers==2.2.2
-# torch==2.2.0+cpu --index-url https://download.pytorch.org/whl/cpu
+chromadb
 
 # HTTP requests & config
-requests==2.31.0
-python-dotenv==1.0.1
-feedparser==6.0.10
+requests
+python-dotenv
+feedparser
 
 # FastAPI + ASGI server
-fastapi==0.109.0
-uvicorn==0.23.2
+fastapi
+uvicorn
 
 # Pydantic for settings management
-pydantic-settings==2.3.1
+pydantic-settings
 
 # Optional: If you need LangChain-Groq integration
-langchain-groq==0.0.5
+langchain-groq
