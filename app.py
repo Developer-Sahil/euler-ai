@@ -41,6 +41,13 @@ def clean_dict(obj):
     else:
         return to_serializable(obj)
 
+@app.get("/")
+async def root():
+    return {"message": "Euler AI Backend is running!"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
 
 @app.post("/analyze")
 async def analyze(inp: AnalyzeInput):
@@ -62,3 +69,17 @@ async def analyze(inp: AnalyzeInput):
         "summary": summary,
         "phase3_report": report
     }
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "*",  # Allow all origins for development
+        "https://8000-cs-1020501189628-default.cs-asia-southeast1-ajrg.cloudshell.dev",
+        "http://localhost:3000",
+        "http://localhost:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
