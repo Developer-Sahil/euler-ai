@@ -15,5 +15,5 @@ langchain-groq==0.3.8
 groq==0.31.1
 
 #Sentence Transformers
-torch==2.2.0+cpu --index-url https://download.pytorch.org/whl/cpu
+torch==2.2.0
 sentence-transformers
