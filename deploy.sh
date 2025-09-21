@@ -1,66 +1,73 @@
 #!/bin/bash
 
-# EulerAI Backend Deployment Script for Google Cloud Run
+# Script to prepare your code for Cloud Console deployment
 
-set -e
+echo "📦 Preparing deployment package..."
 
-# Configuration
-PROJECT_ID="euler-ai-471908"  # Change this to your project ID
-SERVICE_NAME="euler-ai-backend"
-REGION="us-central1"
-IMAGE_NAME="gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
+# Create a clean deployment directory
+DEPLOY_DIR="euler-deploy"
+rm -rf $DEPLOY_DIR
+mkdir -p $DEPLOY_DIR
 
-echo "🚀 Starting deployment of EulerAI Backend to Cloud Run..."
+# Copy all necessary files
+cp -r agents $DEPLOY_DIR/
+cp *.py $DEPLOY_DIR/
+cp requirements.txt $DEPLOY_DIR/
+cp Dockerfile $DEPLOY_DIR/
+cp .dockerignore $DEPLOY_DIR/
 
-# Check if gcloud is installed
-if ! command -v gcloud &> /dev/null; then
-    echo "❌ gcloud CLI is not installed. Please install it first."
-    exit 1
+# Create config.py if it doesn't exist
+if [ ! -f "$DEPLOY_DIR/config.py" ]; then
+    cat > $DEPLOY_DIR/config.py << 'EOF'
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class Config:
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+    APP_NAME = "EulerAI Backend"
+    APP_VERSION = "1.0.0"
+    DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+    PORT = int(os.getenv("PORT", 8080))
+    HOST = os.getenv("HOST", "0.0.0.0")
+    LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+    LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", 0.3))
+    EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+    MAX_PAPERS = int(os.getenv("MAX_PAPERS", 5))
+    N_CLUSTERS = int(os.getenv("N_CLUSTERS", 2))
+    IS_CLOUD_RUN = os.getenv("K_SERVICE") is not None
+
+config = Config()
+EOF
 fi
 
-# Set project
-echo "📋 Setting project to ${PROJECT_ID}..."
-gcloud config set project ${PROJECT_ID}
+# Create a simple Dockerfile if it doesn't exist
+if [ ! -f "$DEPLOY_DIR/Dockerfile" ]; then
+    cat > $DEPLOY_DIR/Dockerfile << 'EOF'
+FROM python:3.11-slim
 
-# Enable required APIs
-echo "🔧 Enabling required Google Cloud APIs..."
-gcloud services enable run.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-gcloud services enable containerregistry.googleapis.com
-gcloud services enable secretmanager.googleapis.com
+WORKDIR /app
 
-# Build the container
-echo "🔨 Building Docker container..."
-gcloud builds submit --tag ${IMAGE_NAME} .
+RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
 
-# Deploy to Cloud Run
-echo "🚢 Deploying to Cloud Run..."
-gcloud run deploy ${SERVICE_NAME} \
-    --image ${IMAGE_NAME} \
-    --platform managed \
-    --region ${REGION} \
-    --allow-unauthenticated \
-    --memory 2Gi \
-    --cpu 2 \
-    --timeout 300 \
-    --max-instances 10 \
-    --min-instances 0 \
-    --port 8080 \
-    --set-env-vars="GROQ_API_KEY=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"
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Get the service URL
-SERVICE_URL=$(gcloud run services describe ${SERVICE_NAME} \
-    --platform managed \
-    --region ${REGION} \
-    --format 'value(status.url)')
+COPY . .
 
-echo "✅ Deployment complete!"
-echo "🌐 Your service is available at: ${SERVICE_URL}"
-echo ""
-echo "📝 Next steps:"
-echo "1. Test the health endpoint: curl ${SERVICE_URL}/health"
-echo "2. Update your frontend to use this URL"
-echo "3. Set up environment variables if needed"
-echo ""
-echo "To set the GROQ API key:"
-echo "gcloud run services update ${SERVICE_NAME} --set-secrets=GROQ_API_KEY=groq-api-key:latest --region ${REGION}"
+RUN mkdir -p logs/agent_runs
+
+ENV PORT=8080
+
+CMD exec uvicorn app:app --host 0.0.0.0 --port ${PORT}
+EOF
+fi
+
+# Create ZIP file
+cd $DEPLOY_DIR
+zip -r ../euler-backend-deploy.zip . -x "*.pyc" -x "*__pycache__*" -x "*.env"
+cd ..
+
+echo "✅ Deployment package created: euler-backend-deploy.zip"
+echo "📝 Next: Upload this ZIP file to Cloud Console"
